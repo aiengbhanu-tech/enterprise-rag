@@ -1,0 +1,19 @@
+name: retrieval-evaluation
+on: [push, pull_request]
+jobs:
+  test-and-evaluate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -c requirements-tested.txt '.[dev]'
+      - run: python -m ruff check rag eval tests scripts
+      - run: python -m pytest -q
+      - run: python -m eval.run --profile smoke --out eval/results/ci
+      - run: python -m eval.gate eval/results/ci/results.json eval/budgets.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: retrieval-experiments
+          path: eval/results/ci/

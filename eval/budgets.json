@@ -1,0 +1,11 @@
+{
+  "configuration": "semantic-hybrid-rerank",
+  "minimums": {
+    "recall": 0.80,
+    "mrr": 0.80,
+    "ndcg": 0.80,
+    "faithfulness_extractive": 1.0,
+    "groundedness_extractive": 1.0
+  },
+  "note": "Smoke regression budgets, specified for fixture integrity; not production quality gates. No tuned winning configuration is selected by CI."
+}

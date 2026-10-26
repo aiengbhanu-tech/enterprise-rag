@@ -1,0 +1,38 @@
+services:
+  api:
+    build:
+      context: .
+      args:
+        EXTRAS: ${RAG_EXTRAS:-models}
+    ports:
+      - "127.0.0.1:8000:8000"
+    environment:
+      RAG_PROFILE: ${RAG_PROFILE:-learned}
+      RAG_DB: /data/rag.sqlite
+      RAG_TOKENS_FILE: /run/secrets/rag_tokens
+      RAG_EMBED_REVISION: ${RAG_EMBED_REVISION:-}
+      RAG_RERANK_REVISION: ${RAG_RERANK_REVISION:-}
+      HF_HUB_OFFLINE: ${HF_HUB_OFFLINE:-0}
+    secrets:
+      - rag_tokens
+    volumes:
+      - rag_data:/data
+      - rag_models:/models
+    read_only: true
+    tmpfs:
+      - /tmp:size=256m,mode=1777
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    pids_limit: 256
+    mem_limit: 4g
+    cpus: 2
+    restart: unless-stopped
+    stop_grace_period: 30s
+secrets:
+  rag_tokens:
+    file: ./secrets/tokens.json
+volumes:
+  rag_data:
+  rag_models:
